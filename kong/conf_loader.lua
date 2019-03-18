@@ -91,6 +91,7 @@ local CONF_INFERENCES = {
   proxy_listen = { typ = "array" },
   admin_listen = { typ = "array" },
   stream_listen = { typ = "array" },
+  grpc_listen = { typ = "array" },
   origins = { typ = "array" },
   db_update_frequency = {  typ = "number"  },
   db_update_propagation = {  typ = "number"  },
@@ -846,6 +847,7 @@ local function load(path, custom_conf)
 
   do
     local http_flags = { "ssl", "http2", "proxy_protocol", "transparent" }
+    local grpc_flags = { "ssl", "proxy_protocol", "transparent" }
     local stream_flags = { "proxy_protocol", "transparent" }
 
     -- extract ports/listen ips
@@ -870,6 +872,13 @@ local function load(path, custom_conf)
     end
 
     setmetatable(conf.stream_listeners, _nop_tostring_mt)
+
+    conf.grpc_listeners, err = parse_listeners(conf.grpc_listen, grpc_flags)
+    if err then
+       return nil, "grpc_listen " .. err
+    end
+
+    setmetatable(conf.grpc_listeners, _nop_tostring_mt)
 
     conf.admin_listeners, err = parse_listeners(conf.admin_listen, http_flags)
     if err then

@@ -186,6 +186,27 @@ server {
 }
 > end
 
+> if #grpc_listeners > 0 then
+upstream kong_grpc_upstream {
+    server 0.0.0.1:9090;
+    balancer_by_lua_block {
+        Kong.balancer()
+    }
+}
+
+server {
+    server_name kong_grpc;
+> for i = 1, #grpc_listeners do
+    listen $(grpc_listeners[i].listener);
+> end
+
+    location / {
+        grpc_pass grpc://kong_grpc_upstream;
+    }
+}
+
+> end
+
 > if #admin_listeners > 0 then
 server {
     server_name kong_admin;
