@@ -9,7 +9,7 @@ DEPS_HASH=$(cat .ci/setup_env.sh .travis.yml | md5sum | awk '{ print $1 }')
 
 OPENSSL_DOWNLOAD=$DOWNLOAD_CACHE/$DEPS_HASH/openssl-$OPENSSL
 OPENRESTY_DOWNLOAD=$DOWNLOAD_CACHE/$DEPS_HASH/openresty-$OPENRESTY
-OPENRESTY_PATCHES_DOWNLOAD=$DOWNLOAD_CACHE/$DEPS_HASH/openresty-patches-master
+OPENRESTY_PATCHES_DOWNLOAD=$DOWNLOAD_CACHE/$DEPS_HASH/openresty-patches
 LUAROCKS_DOWNLOAD=$DOWNLOAD_CACHE/$DEPS_HASH/luarocks-$LUAROCKS
 CPAN_DOWNLOAD=$DOWNLOAD_CACHE/$DEPS_HASH/cpanm
 
@@ -28,8 +28,13 @@ if [ ! "$(ls -A $OPENRESTY_DOWNLOAD)" ]; then
 fi
 
 if [ ! "$(ls -A $OPENRESTY_PATCHES_DOWNLOAD)" ]; then
-  pushd $DOWNLOAD_CACHE/$DEPS_HASH
-    curl -s -S -L https://github.com/Kong/openresty-patches/archive/master.tar.gz | tar xz
+  pushd $DOWNLOAD_CACHE
+    git clone -b $OPENRESTY_PATCHES_BRANCH https://github.com/Kong/openresty-patches.git
+  popd
+else
+  pushd $OPENRESTY_PATCHES_DOWNLOAD
+    git fetch --all
+    git reset --hard origin/$OPENRESTY_PATCHES_BRANCH
   popd
 fi
 
