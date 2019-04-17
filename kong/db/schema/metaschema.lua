@@ -46,7 +46,7 @@ local validators = {
   { match_none = match_list },
   { match_any = match_any_list },
   { starts_with = { type = "string" }, },
-  { one_of = { type = "array", elements = { type = "string" } }, },
+  { one_of = { type = "array", elements = { type = "any" } }, },
   { contains = { type = "any" }, },
   { is_regex = { type = "boolean" }, },
   { timestamp = { type = "boolean" }, },
@@ -134,12 +134,22 @@ local entity_checkers = {
     },
   },
   { custom_entity_check = {
-    type = "record",
-    fields = {
-      { field_sources = { type = "array", elements = { type = "string" } } },
-      { fn = { type = "function" } },
+      type = "record",
+      fields = {
+        { field_sources = { type = "array", elements = { type = "string" } } },
+        { fn = { type = "function" } },
+      }
     }
-  } },
+  },
+  { mutually_required = { type = "array", elements = { type = "string" } } },
+  { mutually_exclusive_sets = {
+      type = "record",
+      fields = {
+        { set1 = {type = "array", elements = {type = "string"} } },
+        { set2 = {type = "array", elements = {type = "string"} } },
+      }
+    }
+  },
 }
 
 local entity_check_names = {}
