@@ -187,6 +187,8 @@ local CONF_INFERENCES = {
 
   lua_ssl_verify_depth = { typ = "number" },
   lua_socket_pool_size = { typ = "number" },
+
+  grpc_proxy = { typ = "boolean" },
 }
 
 

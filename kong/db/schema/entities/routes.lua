@@ -43,7 +43,7 @@ return {
                          len_min  = 1,
                          required = true,
                          elements = typedefs.protocol,
-                         default  = { "http", "https" }, -- TODO: different default depending on service's scheme
+                         default  = { "http", "https", "grpc", "grpcs" }, -- TODO: different default depending on service's scheme
                        }, },
     { methods        = { type = "set",
                          elements = typedefs.http_method,
@@ -115,6 +115,8 @@ return {
                                       else_match = { elements = { type = "string", one_of = { "tcp", "tls" }}},
                                       else_then_at_least_one_of = { "sources", "destinations", "snis" },
                                       else_then_err = "must set one of %s when 'protocols' is 'tcp' or 'tls'",
+                                      else_match = { elements = {type = "string", one_of = { "grpc", "grpcs" } } },
+                                      else_then_at_least_one_of = { "hosts" },
                                     }},
 
     { conditional = { if_field = "protocols",

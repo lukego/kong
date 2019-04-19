@@ -149,8 +149,12 @@ server {
         proxy_pass_header  Date;
         proxy_ssl_name     $upstream_host;
 
-        if ($content_type =  "application/grpc") { grpc_pass  $upstream_scheme://kong_upstream$upstream_uri; }
+> if grpc_proxy then
+        if ($content_type =  "application/grpc") { grpc_pass  grpc://kong_upstream; }
         if ($content_type != "application/grpc") { proxy_pass $upstream_scheme://kong_upstream$upstream_uri; }
+> else
+        proxy_pass $upstream_scheme://kong_upstream$upstream_uri;
+> end
 
         header_filter_by_lua_block {
             Kong.header_filter()
