@@ -222,6 +222,19 @@ function _M:start_upstreams(conf, port_count)
   for i=1,port_count do
     uris[i] = "http://" .. worker_vip .. ":" .. UPSTREAM_PORT+i-1
   end
+
+  self.log.info("waiting for worker to be reachable on port " .. UPSTREAM_PORT)
+  local sock = ngx.socket.tcp()
+  for attempt=1,100 do
+     if sock:connect(worker_vip, UPSTREAM_PORT) then
+        self.log.info("worker is reachable on port ", UPSTREAM_PORT)
+        break
+     end
+     ngx.sleep(0.1)
+  end
+  sock:close()
+
+
   return uris
 end
 
